@@ -45,8 +45,7 @@ void MultiAgentJoystick::joystickCallback(const sensor_msgs::Joy_<std::allocator
         if(msg->buttons.at(6) != 0) {
             if(!backwards_select_pressed) {
                 backwards_select_pressed = true;
-                decrement = true;
-                ROS_INFO("MultiAgentJoystick: Switching Robot - backwards");
+                decrement = true;                
             }
         } else {
             backwards_select_pressed = false;
@@ -58,7 +57,6 @@ void MultiAgentJoystick::joystickCallback(const sensor_msgs::Joy_<std::allocator
             if(!forwards_select_pressed) {
                 forwards_select_pressed = true;
                 increment = true;
-                ROS_INFO("MultiAgentJoystick: Switching Robot - forwards");
             }
         } else {
             forwards_select_pressed = false;
@@ -72,8 +70,7 @@ void MultiAgentJoystick::joystickCallback(const sensor_msgs::Joy_<std::allocator
 
         // Output the new namespace
         if(decrement || increment) {
-            std::string output = "New namespace = " + selected_namespace;
-            ROS_INFO(output.c_str());
+            std::string output = "New namespace = " + selected_namespace;            
         }
     }
 
@@ -96,8 +93,7 @@ bool MultiAgentJoystick::changeNamespace(bool decrement){
     std::string new_namespace = "";
     if(it == namespace_set.end() || namespace_set.size() == 1) {
         new_namespace = *(namespace_set.begin());
-        std::string output = "updating namespace to " + new_namespace;
-        ROS_INFO_THROTTLE(1.0, output.c_str());
+        std::string output = "updating namespace to " + new_namespace;        
     }else if(decrement) { // Decrement just starts over for now
         new_namespace = *(namespace_set.begin());
     }else {
@@ -115,8 +111,17 @@ bool MultiAgentJoystick::changeNamespace(bool decrement){
         return false;
     else {
         selected_namespace = new_namespace;
+
+        // Update the publisher
+        std::string cmd_topic = "/" + selected_namespace + "cmd_vel";
+        pub_command = n.advertise<geometry_msgs::Twist>(cmd_topic.c_str(), 1);
+
+        // Output Robot being controlled
+        std::string output = "\nMultiAgentJoystick - Controlling " + selected_namespace + "\n";
         return true;
     }
+
+
 }
 
 void MultiAgentJoystick::publishCommand(){
@@ -140,14 +145,6 @@ void MultiAgentJoystick::processTopics(){
             output += "topic: " + info.name + "\n";
         }
     }
-    //ROS_INFO_THROTTLE(1.0, output.c_str());
-
-    // Output list of robots:
-    output = "Valid robot namespaces found:";
-    for(std::set<std::string>::iterator it = namespace_set.begin(); it != namespace_set.end(); it++) {
-        output += *it + "\n";
-    }
-    ROS_INFO_THROTTLE(1.0, output.c_str());
 }
 
 bool MultiAgentJoystick::extractTopicNamespace(const std::string & topic_input, std::string & namespace_out )
