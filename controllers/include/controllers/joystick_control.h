@@ -21,8 +21,6 @@ public:
 
     geometry_msgs::Twist cmd;
 
-    void printMessage();
-
     void joystickCallback(const sensor_msgs::Joy::ConstPtr & msg);
 
     void publishCommand();

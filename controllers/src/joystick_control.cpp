@@ -19,10 +19,6 @@ JoystickControl::JoystickControl() {
     pub_command = n.advertise<geometry_msgs::Twist>("cmd_vel", 1);
 }
 
-void JoystickControl::printMessage() {
-    ROS_INFO("Printing message");
-}
-
 void JoystickControl::joystickCallback(const sensor_msgs::Joy_<std::allocator<void> >::ConstPtr &msg) {
     // Create a message from the first two elements of msg->axes
     if(msg->axes.size() < 2) {
@@ -49,9 +45,6 @@ int main(int argc, char **argv) {
     ros::NodeHandle node;
     ros::Subscriber sub_joy = node.subscribe("/joy", 10, &JoystickControl::joystickCallback, &tmp);
 
-
-    // Garbage
-    tmp.printMessage();
 
     ros::Rate r(20);
 
