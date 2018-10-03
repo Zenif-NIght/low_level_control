@@ -10,6 +10,7 @@ MultiAgentJoystick::MultiAgentJoystick() {
     topic_base = "robot";
     backwards_select_pressed = false;
     forwards_select_pressed = false;
+    selected_namespace = "";
 
     // Initialize the joystick command
     cmd.linear.y = 0.0;
@@ -38,10 +39,13 @@ void MultiAgentJoystick::joystickCallback(const sensor_msgs::Joy_<std::allocator
     if(msg->buttons.size() < 7) {
         ROS_ERROR_THROTTLE(1.0, "MultiAgentJoystick::joystickCallback() Insufficient joystick buttons");
     } else {
+        bool decrement = false;
+
         // Check backwards pressed
         if(msg->buttons.at(6) != 0) {
             if(!backwards_select_pressed) {
                 backwards_select_pressed = true;
+                decrement = true;
                 ROS_INFO("MultiAgentJoystick: Switching Robot - backwards");
             }
         } else {
@@ -49,17 +53,70 @@ void MultiAgentJoystick::joystickCallback(const sensor_msgs::Joy_<std::allocator
         }
 
         // Check forward pressed
+        bool increment = false;
         if(msg->buttons.at(7) != 0) {
             if(!forwards_select_pressed) {
                 forwards_select_pressed = true;
+                increment = true;
                 ROS_INFO("MultiAgentJoystick: Switching Robot - forwards");
             }
         } else {
             forwards_select_pressed = false;
         }
 
+        // Update the selected namespace
+        if(decrement)
+            changeNamespace(true);
+        else if(increment)
+            changeNamespace(false);
+
+        // Output the new namespace
+        if(decrement || increment) {
+            std::string output = "New namespace = " + selected_namespace;
+            ROS_INFO(output.c_str());
+        }
     }
 
+}
+
+/**
+ * @brief MultiAgentJoystick::changeNamespace Updates the namespace topic
+ * @param decrement: True implies to get the previous namespace in the set, false implies to get the next
+ * @return true if namespace changed
+ */
+bool MultiAgentJoystick::changeNamespace(bool decrement){
+    // Check to see if the namespace set has values
+    if(namespace_set.size() == 0)
+        return false;
+
+    // Get an iterator to the current selected namespace
+    std::set<std::string>::const_iterator it = namespace_set.find(selected_namespace);
+
+    // Choose the first element if the namespace was not found or if there is only one element
+    std::string new_namespace = "";
+    if(it == namespace_set.end() || namespace_set.size() == 1) {
+        new_namespace = *(namespace_set.begin());
+        std::string output = "updating namespace to " + new_namespace;
+        ROS_INFO_THROTTLE(1.0, output.c_str());
+    }else if(decrement) { // Decrement just starts over for now
+        new_namespace = *(namespace_set.begin());
+    }else {
+        // Increment the iterator
+        it++;
+
+        // Update the new namespace
+        if(it == namespace_set.end()) // Check to see if the end is reached
+            it = namespace_set.begin();
+        new_namespace = *it;
+    }
+
+    // Update the namespace
+    if(new_namespace.compare(selected_namespace) == 0)
+        return false;
+    else {
+        selected_namespace = new_namespace;
+        return true;
+    }
 }
 
 void MultiAgentJoystick::publishCommand(){
