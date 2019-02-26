@@ -17,15 +17,24 @@ int main(int argc, char* argv[])
   std::string odom_frame = "odom";
   nh.param("odom_frame", odom_frame, std::string("odom"));
 
+  // Read in initial state
+  double x_pos, y_pos, z_pos, yaw;
+  x_pos = y_pos = z_pos = yaw = 0.0;
+  ros::NodeHandle nh_loc("~");
+  nh_loc.getParam("x_pos", x_pos);
+  nh_loc.getParam("y_pos", y_pos);
+  nh_loc.getParam("z_pos", z_pos);
+  nh_loc.getParam("yaw", yaw);
+
   // Initialize ros variables
   tf::TransformBroadcaster tf_broadcaster;
   geometry_msgs::TransformStamped map_odom_tf;
 
   // Initialize transform
-  map_odom_tf.transform.translation.x = 0.0;
-  map_odom_tf.transform.translation.y = 0.0;
-  map_odom_tf.transform.translation.z = 0.0;
-  map_odom_tf.transform.rotation = tf::createQuaternionMsgFromYaw(0.0);
+  map_odom_tf.transform.translation.x = x_pos;
+  map_odom_tf.transform.translation.y = y_pos;
+  map_odom_tf.transform.translation.z = z_pos;
+  map_odom_tf.transform.rotation = tf::createQuaternionMsgFromYaw(yaw);
 
   // Initialize header information
   map_odom_tf.header.frame_id = "map";
