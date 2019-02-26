@@ -37,8 +37,11 @@ private:
 
     // Message storage variables
     geometry_msgs::Twist cmd;
-    geometry_msgs::PoseStamped::ConstPtr goal;
+    geometry_msgs::PoseStamped goal;
     nav_msgs::Odometry::ConstPtr odom;
+
+    // Flags
+    bool goal_received; // True if a goal location has been received, false otherwise
 
     // Nominal command values
     double v_nom;   // Nominal translational velocity

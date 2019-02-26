@@ -3,7 +3,7 @@
 
 using namespace controllers;
 
-SimpleGoToGoal::SimpleGoToGoal(): v_nom(1.0), k_w(1.0), k_v(0.5) {
+SimpleGoToGoal::SimpleGoToGoal(): goal_received(false), v_nom(1.0), k_w(1.0), k_v(0.5) {
     // Read in constants
     ros::NodeHandle nh("~");
     nh.getParam("nominal_velocity", v_nom);
@@ -29,7 +29,19 @@ SimpleGoToGoal::SimpleGoToGoal(): v_nom(1.0), k_w(1.0), k_v(0.5) {
 }
 
 void SimpleGoToGoal::goalCallback(const geometry_msgs::PoseStamped::ConstPtr & msg){
-    goal = msg;
+    // Transform goal to odom frame
+    if(!odom) {
+        ROS_ERROR_THROTTLE(1.0, "SimpleGoToGoal::goalCallback() Goal received without odometry - goal ignored");
+        return;
+    }
+    try {
+        tf_listener.waitForTransform(odom->header.frame_id, msg->header.frame_id, msg->header.stamp, ros::Duration(0.5)); // Wait up to half a second for the transform
+        tf_listener.transformPose(odom->header.frame_id, *msg, goal);
+        goal_received = true;
+    }
+    catch(tf::TransformException ex) {
+        ROS_ERROR("SimpleGoToGoal::goalCallback() %s", ex.what());
+    }
 }
 
 void SimpleGoToGoal::odomCallback(const nav_msgs::Odometry::ConstPtr & msg){
@@ -45,7 +57,7 @@ bool SimpleGoToGoal::calculateCommand(){
     // ********** Transform data **************** //
     // Check to see if data has arrived
     bool execute = true;
-    if(!goal) {
+    if(!goal_received) {
         ROS_WARN_THROTTLE(5.0, "SimpleGoToGoal::calculateCommand() goal not yet received");
         execute = false;
     }
@@ -58,17 +70,8 @@ bool SimpleGoToGoal::calculateCommand(){
     }
 
     // Store latest data
-    geometry_msgs::PoseStamped goal_latest; // = *goal;
+    geometry_msgs::PoseStamped goal_latest = goal;
     nav_msgs::Odometry odom_latest = *odom;
-
-    // Transform goal to odom frame
-    try {
-        tf_listener.transformPose(odom_latest.header.frame_id, *goal, goal_latest);
-    }
-    catch(tf::TransformException ex) {
-        ROS_ERROR("SimpleGoToGoal::calculateCommand() %s", ex.what());
-        return false;
-    }
 
     // ********** Calculate command **************** //
     // Calculate desired translational velocity
