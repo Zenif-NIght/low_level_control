@@ -138,6 +138,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(joystick_control src/joystick_control.cpp)
 add_executable(multi_agent_joystick src/multi_agent_joystick.cpp)
+add_executable(simple_go_to_goal src/simple_go_to_goal.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
