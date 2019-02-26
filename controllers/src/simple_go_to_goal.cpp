@@ -1,4 +1,5 @@
 #include "controllers/simple_go_to_goal.h"
+#include "math.h"
 
 using namespace controllers;
 
@@ -21,6 +22,7 @@ void SimpleGoToGoal::publishCommand()
 
 bool SimpleGoToGoal::calculateCommand(){
 
+    // ********** Transform data **************** //
     // Check to see if data has arrived
     bool execute = true;
     if(!goal) {
@@ -35,8 +37,35 @@ bool SimpleGoToGoal::calculateCommand(){
         return false;
 
     // Store latest data
-    geometry_msgs::PoseStamped goal_latest = *goal;
+    geometry_msgs::PoseStamped goal_latest; // = *goal;
     nav_msgs::Odometry odom_latest = *odom;
+
+    // Transform goal to odom frame
+    try {
+        tf_listener.transformPose(odom_latest.header.frame_id, *goal, goal_latest);
+    }
+    catch(tf::TransformException ex) {
+        ROS_ERROR("SimpleGoToGoal::calculateCommand() %s", ex.what());
+        return false;
+    }
+
+    // ********** Calculate command **************** //
+    // Calculate desired translational velocity
+    double del_x, del_y;        // Calculate distance to the goal
+    del_x = goal_latest.pose.position.x - odom_latest.pose.pose.position.x;
+    del_y = goal_latest.pose.position.y - odom_latest.pose.pose.position.y;
+    double dist_to_goal = std::sqrt(del_x*del_x + del_y*del_y); // norm of the difference vector
+    double v_des = v_nom*std::tanh(dist_to_goal);
+
+    // Calculate orientation error
+
+    // Calculate desired rotational velocity
+
+    // Store command
+
+
+
+    return true;
 }
 
 int main(int argc, char **argv) {

@@ -30,6 +30,9 @@ public:
 
     tf::TransformListener tf_listener;
 
+    // Nominal command values
+    double v_nom;   // Nominal translational velocity
+
 
     void goalCallback(const geometry_msgs::PoseStamped::ConstPtr & msg);
     void odomCallback(const nav_msgs::Odometry::ConstPtr & msg);
