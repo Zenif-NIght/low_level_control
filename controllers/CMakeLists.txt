@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   sensor_msgs
   std_msgs
+  tf
 )
 
 ## System dependencies are found with CMake's conventions
@@ -150,6 +151,7 @@ add_executable(simple_go_to_goal src/simple_go_to_goal.cpp)
 ## same as for the library above
 add_dependencies(joystick_control ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(multi_agent_joystick ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(simple_go_to_goal ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(joystick_control
@@ -157,6 +159,10 @@ target_link_libraries(joystick_control
 )
 
 target_link_libraries(multi_agent_joystick
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(simple_go_to_goal
   ${catkin_LIBRARIES}
 )
 
