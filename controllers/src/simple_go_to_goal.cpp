@@ -1,5 +1,6 @@
 #include "controllers/simple_go_to_goal.h"
 #include "math.h"
+#include "nav_msgs/Path.h"
 
 using namespace controllers;
 
@@ -22,6 +23,7 @@ SimpleGoToGoal::SimpleGoToGoal(): goal_received(false), v_nom(1.0), k_w(1.0), k_
 
     // Advertize the command
     pub_command = n.advertise<geometry_msgs::Twist>("cmd_vel", 1);
+    pub_path = n.advertise<nav_msgs::Path>("path", 1);
 
     // Subscribe to goal and odometry
     sub_goal = n.subscribe("goal", 1, &SimpleGoToGoal::goalCallback, this);
@@ -50,7 +52,29 @@ void SimpleGoToGoal::odomCallback(const nav_msgs::Odometry::ConstPtr & msg){
 
 void SimpleGoToGoal::publishCommand()
 {
+    // Publish plan
     pub_command.publish(cmd);
+
+    // ********************* Publish path to goal  *************************** //
+    if(odom && goal_received) {
+        // Initial the path variable
+        nav_msgs::Path path;
+        path.header.stamp = ros::Time::now();
+        path.header.frame_id = odom->header.frame_id;
+
+        // Add the current position of the robot
+        geometry_msgs::PoseStamped current;
+        current.header.frame_id = odom->header.frame_id;
+        current.header.stamp = odom->header.stamp;
+        current.pose = odom->pose.pose;
+        path.poses.push_back(current);
+
+        // Add the goal position to the path
+        path.poses.push_back(goal);
+
+        // Publish the path
+        pub_path.publish(path);
+    }
 }
 
 bool SimpleGoToGoal::calculateCommand(){

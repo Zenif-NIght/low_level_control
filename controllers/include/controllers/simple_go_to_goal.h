@@ -31,6 +31,7 @@ private:
     // ROS variables
     ros::NodeHandle n;
     ros::Publisher pub_command;
+    ros::Publisher pub_path;
     ros::Subscriber sub_goal;
     ros::Subscriber sub_odom;
     tf::TransformListener tf_listener;
