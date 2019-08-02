@@ -32,7 +32,8 @@ class LineWorld
 {
 public:
     LineWorld(const std::string & vehicle_namespace, const std::string & inertial_frame,
-              const std::string & robot_frame, double loop_rate, int n_lines, double max_dist);
+              const std::string & robot_frame, double loop_rate, int n_lines,
+              double max_dist, std::vector<turtlebot_sim::Line> lines);
     ~LineWorld();
 
 
@@ -42,8 +43,6 @@ public:
                                      double p2_x, double p2_y, double p3_x, double p3_y, double &i_x, double &i_y);
 
     void odomCallback(const nav_msgs::Odometry::ConstPtr & msg);
-
-    void addLine(const Eigen::Vector2d & q1, const Eigen::Vector2d & q2);
 
     void publishVisualization();
 

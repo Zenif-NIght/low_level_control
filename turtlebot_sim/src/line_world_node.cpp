@@ -26,29 +26,18 @@ Line::Line(const Line & old):
 {}
 
 LineWorld::LineWorld(const std::string & vehicle_namespace, const std::string & inertial_frame,
-                     const std::string & robot_frame, double loop_rate, int n_lines, double max_dist) :
+                     const std::string & robot_frame, double loop_rate, int n_lines,
+                     double max_dist, std::vector<turtlebot_sim::Line> lines) :
     frame_id(inertial_frame),
     robot_frame(robot_frame),
     vehicle_namespace(vehicle_namespace),
+    lines(lines),
     n_lines(n_lines),
     d_max(max_dist),
     loop_rate(loop_rate)
 {
     ///TODO: Read these values in from the parameter server
     Eigen::Vector2d q1, q2;
-
-    // Make bounding box
-    q1 << -6, 6; q2 << 6, 6;
-    addLine(q1, q2);
-
-    q1 << 6, 6; q2 << 6, -6;
-    addLine(q1, q2);
-
-    q1 << 6, -6; q2 << -6, -6;
-    addLine(q1, q2);
-
-    q1 << -6, -6; q2 << -6, 6;
-    addLine(q1, q2);
 
     // Advertize visualization messages
     line_vis_pub = nh.advertise<visualization_msgs::MarkerArray>("line_world_lines", 10);
@@ -88,10 +77,6 @@ double LineWorld::adjustAngle(double angle) {
     double c = std::cos(angle);
     double s = std::sin(angle);
     return std::atan2(s, c);
-}
-
-void LineWorld::addLine(const Eigen::Vector2d & q1, const Eigen::Vector2d & q2){
-    lines.emplace_back(q1, q2);
 }
 
 void LineWorld::createWorldVisualizationMessage(){
@@ -403,9 +388,33 @@ int main(int argc, char* argv[])
   nh_loc.getParam("n_lines", n_lines);
   nh_loc.getParam("max_distance", max_distance);
 
+  // Read in line parameters
+  std::vector<double> x1, y1, x2, y2;
+  nh_loc.getParam("x1", x1);
+  nh_loc.getParam("y1", y1);
+  nh_loc.getParam("x2", x2);
+  nh_loc.getParam("y2", y2);
+  ROS_ASSERT(x1.size() == y1.size() && y1.size() == x2.size() &&
+             x2.size() == y2.size());
+
+  // Create a vector of lines
+  std::vector<turtlebot_sim::Line> lines;
+  std::vector<double>::iterator x1_iter, x2_iter, y1_iter, y2_iter;
+  x1_iter = x1.begin();
+  y1_iter = y1.begin();
+  x2_iter = x2.begin();
+  y2_iter = y2.begin();
+  for(; x1_iter != x1.end(); x1_iter++, y1_iter++, x2_iter++, y2_iter++) {
+      Eigen::Vector2d q1, q2;
+      q1 << *x1_iter, *y1_iter;
+      q2 << *x2_iter, *y2_iter;
+      lines.emplace_back(q1, q2);
+  }
+
 
   LineWorld world(vehicle_namespace, inertial_frame,
-                  robot_frame, loop_rate, n_lines, max_distance);
+                  robot_frame, loop_rate, n_lines,
+                  max_distance, lines);
 
   ros::Rate lr(loop_rate);
 
