@@ -85,12 +85,12 @@ void Turtlebot_vehicle::updateJoint(ros::Duration diff_time){
     wheel_l = w[LEFT]  * diff_time.toSec();
     wheel_r = w[RIGHT] * diff_time.toSec();
 
-    if(isnan(wheel_l))
+    if(std::isnan(wheel_l))
     {
       wheel_l = 0.0;
     }
 
-    if(isnan(wheel_r))
+    if(std::isnan(wheel_r))
     {
       wheel_r = 0.0;
     }

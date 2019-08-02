@@ -1,0 +1,16 @@
+<launch>
+  <arg name="namespace" default="/robot1" />
+
+  <node name="robot1_laser_scan" pkg="turtlebot_sim" type="line_world_node" output="screen" >
+    <param name="vehicle_namespace" type="string" value="$(arg namespace)" />
+    <param name="inertial_frame" type="string" value="map" />
+    <param name="robot_frame" type="string" value="base_link" />
+    <param name="loop_rate" type="double" value="30" />
+    <param name="n_lines" type="int" value="10" />
+    <param name="max_distance" type="double" value="4.0" />
+
+    <remap from="scan" to="$(arg namespace)/scan" />
+    <remap from="odom" to="$(arg namespace)/odom" />
+  </node>
+
+</launch>
