@@ -28,46 +28,44 @@
 
 namespace turtlebot_sim
 {
+#define WHEEL_RADIUS 0.033  // meter
 
-#define WHEEL_RADIUS                    0.033     // meter
-
-#define LEFT                            0
-#define RIGHT                           1
+#define LEFT 0
+#define RIGHT 1
 
 class Turtlebot_vehicle
 {
-public:
-    Turtlebot_vehicle();
-    ~Turtlebot_vehicle();
-    bool init();
-    bool update();
+ public:
+  Turtlebot_vehicle();
+  ~Turtlebot_vehicle();
+  bool init();
+  bool update();
 
-private:
-    // ROS NodeHandle
-    ros::NodeHandle nh_;
+ private:
+  // ROS NodeHandle
+  ros::NodeHandle nh_;
 
-    // ROS Topic Publishers
-    ros::Publisher joint_states_pub_;
+  // ROS Topic Publishers
+  ros::Publisher joint_states_pub_;
 
-    // ROS time for updates
-    ros::Time prev_update_time_;
+  // ROS time for updates
+  ros::Time prev_update_time_;
 
-    sensor_msgs::JointState joint_states_;
-    double wheel_speed_cmd_[2];
+  sensor_msgs::JointState joint_states_;
+  double wheel_speed_cmd_[2];
 
-    std::string joint_states_name_[2];
+  std::string joint_states_name_[2];
 
-    double last_position_[2];
-    double last_velocity_[2];
+  double last_position_[2];
+  double last_velocity_[2];
 
-    double wheel_seperation_;
-    double turning_radius_;
-    double robot_radius_;
+  double wheel_seperation_;
+  double turning_radius_;
+  double robot_radius_;
 
-    void updateJoint(ros::Duration diff_time);
-    void odometryCallback(const nav_msgs::OdometryConstPtr odom);
-
+  void updateJoint(ros::Duration diff_time);
+  void odometryCallback(const nav_msgs::OdometryConstPtr odom);
 };
-} // end namespace turtlebot_sim
+}  // end namespace turtlebot_sim
 
-#endif // TURTLEBOT_VEHICLE_H_
+#endif  // TURTLEBOT_VEHICLE_H_

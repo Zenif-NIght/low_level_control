@@ -1,14 +1,13 @@
-#include  <ros/ros.h>
+#include <ros/ros.h>
 #include <ros/time.h>
 
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 
-
 /*******************************************************************************
 * Main function
 *******************************************************************************/
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
   ros::init(argc, argv, "simple_map_tf");
   ros::NodeHandle nh;

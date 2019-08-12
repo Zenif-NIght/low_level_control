@@ -20,7 +20,7 @@
 #ifndef UNICYCLE_H_
 #define UNICYCLE_H_
 
-#include  <ros/ros.h>
+#include <ros/ros.h>
 #include <ros/time.h>
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/Twist.h>
@@ -29,44 +29,41 @@
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 
-namespace dynamic_models{
-
-
+namespace dynamic_models
+{
 class Unicycle
 {
-public:
-    Unicycle();
-    ~Unicycle();
-    bool init();
-    bool update();
+ public:
+  Unicycle();
+  ~Unicycle();
+  bool init();
+  bool update();
 
-private:
-    // ROS NodeHandle
-    ros::NodeHandle nh_;
+ private:
+  // ROS NodeHandle
+  ros::NodeHandle nh_;
 
-    // ROS Topic Publishers
-    ros::Publisher odom_pub_;
+  // ROS Topic Publishers
+  ros::Publisher odom_pub_;
 
-    // ROS Topic Subscribers
-    ros::Subscriber cmd_vel_sub_;
+  // ROS Topic Subscribers
+  ros::Subscriber cmd_vel_sub_;
 
-    // ROS time for updates
-    ros::Time prev_update_time_;
+  // ROS time for updates
+  ros::Time prev_update_time_;
 
-    // Variables
-    double linear_velocity_;
-    double angular_velocity_;
-    double yaw_;
-    nav_msgs::Odometry odom_;
-    tf::TransformBroadcaster tf_broadcaster_;
+  // Variables
+  double linear_velocity_;
+  double angular_velocity_;
+  double yaw_;
+  nav_msgs::Odometry odom_;
+  tf::TransformBroadcaster tf_broadcaster_;
 
-    // Function prototypes
-    void commandVelocityCallback(const geometry_msgs::TwistConstPtr cmd_vel_msg);
-    bool updateOdometry(ros::Duration diff_time);
-    void updateTF(geometry_msgs::TransformStamped& odom_tf);
+  // Function prototypes
+  void commandVelocityCallback(const geometry_msgs::TwistConstPtr cmd_vel_msg);
+  bool updateOdometry(ros::Duration diff_time);
+  void updateTF(geometry_msgs::TransformStamped &odom_tf);
 };
-
 }
 
-
-#endif // UNICYCLE_H_
+#endif  // UNICYCLE_H_
