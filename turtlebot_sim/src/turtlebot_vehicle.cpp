@@ -113,7 +113,7 @@ void Turtlebot_vehicle::odometryCallback(const nav_msgs::OdometryConstPtr odom)
 /*******************************************************************************
 * Main function
 *******************************************************************************/
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
   ros::init(argc, argv, "turtlebot_vehicle_node");
   Turtlebot_vehicle vehicle;

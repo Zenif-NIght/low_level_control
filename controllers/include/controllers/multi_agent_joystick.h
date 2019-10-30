@@ -12,20 +12,20 @@ namespace controllers
 {
 class MultiAgentJoystick
 {
- public:
+public:
   MultiAgentJoystick();
 
- public:
+public:
   ros::NodeHandle n;
   ros::Publisher pub_command;
 
-  void joystickCallback(const sensor_msgs::Joy::ConstPtr &msg);
+  void joystickCallback(const sensor_msgs::Joy::ConstPtr& msg);
 
   void publishCommand();
 
   void processTopics();
 
- private:
+private:
   geometry_msgs::Twist cmd;
   std::string topic_base;
   std::set<std::string> namespace_set;
@@ -33,7 +33,7 @@ class MultiAgentJoystick
   bool forwards_select_pressed;
   std::string selected_namespace;
 
-  bool extractTopicNamespace(const std::string &topic_input, std::string &namespace_out);
+  bool extractTopicNamespace(const std::string& topic_input, std::string& namespace_out);
   bool changeNamespace(bool decrement);
 };
 }

@@ -35,13 +35,13 @@ namespace turtlebot_sim
 
 class Turtlebot_vehicle
 {
- public:
+public:
   Turtlebot_vehicle();
   ~Turtlebot_vehicle();
   bool init();
   bool update();
 
- private:
+private:
   // ROS NodeHandle
   ros::NodeHandle nh_;
 

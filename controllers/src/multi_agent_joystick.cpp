@@ -26,7 +26,7 @@ MultiAgentJoystick::MultiAgentJoystick()
   pub_command = n.advertise<geometry_msgs::Twist>("cmd_vel", 1);
 }
 
-void MultiAgentJoystick::joystickCallback(const sensor_msgs::Joy_<std::allocator<void> >::ConstPtr &msg)
+void MultiAgentJoystick::joystickCallback(const sensor_msgs::Joy_<std::allocator<void> >::ConstPtr& msg)
 {
   // Create a message from the first two elements of msg->axes
   if (msg->axes.size() < 2)
@@ -168,7 +168,7 @@ void MultiAgentJoystick::processTopics()
   std::string output = "\n";
   for (ros::master::V_TopicInfo::iterator it = master_topics.begin(); it != master_topics.end(); ++it)
   {
-    const ros::master::TopicInfo &info = *it;
+    const ros::master::TopicInfo& info = *it;
     std::string namespace_in = "";
 
     if (extractTopicNamespace(info.name, namespace_in))
@@ -183,7 +183,7 @@ void MultiAgentJoystick::processTopics()
   }
 }
 
-bool MultiAgentJoystick::extractTopicNamespace(const std::string &topic_input, std::string &namespace_out)
+bool MultiAgentJoystick::extractTopicNamespace(const std::string& topic_input, std::string& namespace_out)
 {
   // Find first and second forward slashes
   size_t first_slash = topic_input.find('/');
@@ -212,7 +212,7 @@ bool MultiAgentJoystick::extractTopicNamespace(const std::string &topic_input, s
   }
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
   ros::init(argc, argv, "beginner_tutorials_joystick");
 

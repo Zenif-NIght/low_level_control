@@ -33,8 +33,8 @@ bool Unicycle::init()
   nh_.param("odom_frame", odom_.header.frame_id, std::string("odom"));
   nh_.param("base_frame", odom_.child_frame_id, std::string("base_footprint"));
 
-  double pcov[36] = {0.1, 0, 0, 0,   0, 0, 0, 0.1, 0, 0, 0,   0, 0, 0, 1e6, 0, 0, 0,
-                     0,   0, 0, 1e6, 0, 0, 0, 0,   0, 0, 1e6, 0, 0, 0, 0,   0, 0, 0.2};
+  double pcov[36] = { 0.1, 0, 0, 0,   0, 0, 0, 0.1, 0, 0, 0,   0, 0, 0, 1e6, 0, 0, 0,
+                      0,   0, 0, 1e6, 0, 0, 0, 0,   0, 0, 1e6, 0, 0, 0, 0,   0, 0, 0.2 };
   memcpy(&(odom_.pose.covariance), pcov, sizeof(double) * 36);
   memcpy(&(odom_.twist.covariance), pcov, sizeof(double) * 36);
 
@@ -90,7 +90,7 @@ bool Unicycle::updateOdometry(ros::Duration diff_time)
   return true;
 }
 
-void Unicycle::updateTF(geometry_msgs::TransformStamped &odom_tf)
+void Unicycle::updateTF(geometry_msgs::TransformStamped& odom_tf)
 {
   odom_tf.header = odom_.header;
   odom_tf.child_frame_id = odom_.child_frame_id;
@@ -103,7 +103,7 @@ void Unicycle::updateTF(geometry_msgs::TransformStamped &odom_tf)
 /*******************************************************************************
 * Main function
 *******************************************************************************/
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
   ros::init(argc, argv, "unicycle_dynamics_node");
   Unicycle unicycle;

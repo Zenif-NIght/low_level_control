@@ -33,13 +33,13 @@ namespace dynamic_models
 {
 class Unicycle
 {
- public:
+public:
   Unicycle();
   ~Unicycle();
   bool init();
   bool update();
 
- private:
+private:
   // ROS NodeHandle
   ros::NodeHandle nh_;
 
@@ -62,7 +62,7 @@ class Unicycle
   // Function prototypes
   void commandVelocityCallback(const geometry_msgs::TwistConstPtr cmd_vel_msg);
   bool updateOdometry(ros::Duration diff_time);
-  void updateTF(geometry_msgs::TransformStamped &odom_tf);
+  void updateTF(geometry_msgs::TransformStamped& odom_tf);
 };
 }
 

@@ -10,16 +10,16 @@ namespace controllers
 {
 class JoystickControl
 {
- public:
+public:
   JoystickControl();
 
- public:
+public:
   ros::NodeHandle n;
   ros::Publisher pub_command;
 
   geometry_msgs::Twist cmd;
 
-  void joystickCallback(const sensor_msgs::Joy::ConstPtr &msg);
+  void joystickCallback(const sensor_msgs::Joy::ConstPtr& msg);
 
   void publishCommand();
 };

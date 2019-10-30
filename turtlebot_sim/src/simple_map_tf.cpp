@@ -7,7 +7,7 @@
 /*******************************************************************************
 * Main function
 *******************************************************************************/
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
   ros::init(argc, argv, "simple_map_tf");
   ros::NodeHandle nh;

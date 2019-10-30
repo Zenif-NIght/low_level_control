@@ -30,7 +30,7 @@ SimpleGoToGoal::SimpleGoToGoal() : goal_received(false), v_nom(1.0), k_w(1.0), k
   sub_odom = n.subscribe("odom", 1, &SimpleGoToGoal::odomCallback, this);
 }
 
-void SimpleGoToGoal::goalCallback(const geometry_msgs::PoseStamped::ConstPtr &msg)
+void SimpleGoToGoal::goalCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
   // Transform goal to odom frame
   if (!odom)
@@ -45,13 +45,13 @@ void SimpleGoToGoal::goalCallback(const geometry_msgs::PoseStamped::ConstPtr &ms
     tf_listener.transformPose(odom->header.frame_id, *msg, goal);
     goal_received = true;
   }
-  catch (const tf::TransformException &ex)
+  catch (const tf::TransformException& ex)
   {
     ROS_ERROR("SimpleGoToGoal::goalCallback() %s", ex.what());
   }
 }
 
-void SimpleGoToGoal::odomCallback(const nav_msgs::Odometry::ConstPtr &msg)
+void SimpleGoToGoal::odomCallback(const nav_msgs::Odometry::ConstPtr& msg)
 {
   odom = msg;
 }
@@ -131,7 +131,7 @@ bool SimpleGoToGoal::calculateCommand()
   return true;
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
   ros::init(argc, argv, "simple_go_to_goal");
   // ros::NodeHandle node;

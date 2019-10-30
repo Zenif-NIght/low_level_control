@@ -14,17 +14,17 @@ namespace controllers
 {
 class SimpleGoToGoal
 {
- public:
+public:
   SimpleGoToGoal();
 
- public:
-  void goalCallback(const geometry_msgs::PoseStamped::ConstPtr &msg);
-  void odomCallback(const nav_msgs::Odometry::ConstPtr &msg);
+public:
+  void goalCallback(const geometry_msgs::PoseStamped::ConstPtr& msg);
+  void odomCallback(const nav_msgs::Odometry::ConstPtr& msg);
 
   void publishCommand();
   bool calculateCommand();
 
- private:
+private:
   // ROS variables
   ros::NodeHandle n;
   ros::Publisher pub_command;

@@ -20,7 +20,7 @@ JoystickControl::JoystickControl()
   pub_command = n.advertise<geometry_msgs::Twist>("cmd_vel", 1);
 }
 
-void JoystickControl::joystickCallback(const sensor_msgs::Joy_<std::allocator<void> >::ConstPtr &msg)
+void JoystickControl::joystickCallback(const sensor_msgs::Joy_<std::allocator<void> >::ConstPtr& msg)
 {
   // Create a message from the first two elements of msg->axes
   if (msg->axes.size() < 2)
@@ -40,7 +40,7 @@ void JoystickControl::publishCommand()
   pub_command.publish(cmd);
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
   ros::init(argc, argv, "beginner_tutorials_joystick");
 
