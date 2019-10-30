@@ -109,7 +109,7 @@ void LineWorld::createWorldVisualizationMessage()
   // Loop through all points
   int marker_id = 0;
   world_markers.markers.clear();
-  for (std::vector<Line>::iterator iter = lines.begin(); iter != lines.end(); iter++, marker_id++)
+  for (std::vector<Line>::iterator iter = lines.begin(); iter != lines.end(); ++iter, ++marker_id)
   {
     // Create the first point
     geometry_msgs::Point pnt1, pnt2;
@@ -168,7 +168,7 @@ bool LineWorld::get2DTransformedPose(geometry_msgs::Pose2D& pose)
     tf_listener.waitForTransform(frame_id, odom->header.frame_id, odom->header.stamp, ros::Duration(0.5));
     tf_listener.transformPose(frame_id, pose_odom, pose3d);
   }
-  catch (tf::TransformException ex)
+  catch (const tf::TransformException &ex)
   {
     ROS_ERROR("LineWorld::get2DTransformedPose() %s", ex.what());
     return false;
@@ -356,7 +356,7 @@ double LineWorld::calculateMaxPosition(const Eigen::Vector2d& q0, Eigen::Vector2
 
   // Loop through all obstacle line segments
   double dist_min = d_max;
-  for (std::vector<Line>::iterator iter = lines.begin(); iter != lines.end(); iter++)
+  for (std::vector<Line>::iterator iter = lines.begin(); iter != lines.end(); ++iter)
   {
     // Extract second line segment variables
     double p2_x, p2_y, p3_x, p3_y;
@@ -423,7 +423,7 @@ int main(int argc, char* argv[])
   y1_iter = y1.begin();
   x2_iter = x2.begin();
   y2_iter = y2.begin();
-  for (; x1_iter != x1.end(); x1_iter++, y1_iter++, x2_iter++, y2_iter++)
+  for (; x1_iter != x1.end(); ++x1_iter, ++y1_iter, ++x2_iter, ++y2_iter)
   {
     Eigen::Vector2d q1, q2;
     q1 << *x1_iter, *y1_iter;
