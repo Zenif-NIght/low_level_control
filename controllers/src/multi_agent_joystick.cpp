@@ -6,13 +6,14 @@
 using namespace controllers;
 
 MultiAgentJoystick::MultiAgentJoystick()
+  :  // Initialize class variables
+  // Advertize the command
+    pub_command(n.advertise<geometry_msgs::Twist>("cmd_vel", 1))
+  , topic_base("robot")
+  , backwards_select_pressed(false)
+  , forwards_select_pressed(false)
+  , selected_namespace("")
 {
-  // Initialize class variables
-  topic_base = "robot";
-  backwards_select_pressed = false;
-  forwards_select_pressed = false;
-  selected_namespace = "";
-
   // Initialize the joystick command
   cmd.linear.y = 0.0;
   cmd.linear.z = 0.0;
@@ -21,9 +22,6 @@ MultiAgentJoystick::MultiAgentJoystick()
   cmd.angular.x = 0.0;
   cmd.angular.y = 0.0;
   cmd.angular.z = 0.0;
-
-  // Advertize the command
-  pub_command = n.advertise<geometry_msgs::Twist>("cmd_vel", 1);
 }
 
 void MultiAgentJoystick::joystickCallback(const sensor_msgs::Joy_<std::allocator<void> >::ConstPtr& msg)

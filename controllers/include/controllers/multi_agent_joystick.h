@@ -26,12 +26,13 @@ public:
   void processTopics();
 
 private:
-  geometry_msgs::Twist cmd;
   std::string topic_base;
-  std::set<std::string> namespace_set;
   bool backwards_select_pressed;
   bool forwards_select_pressed;
   std::string selected_namespace;
+  std::set<std::string> namespace_set;
+
+  geometry_msgs::Twist cmd;
 
   bool extractTopicNamespace(const std::string& topic_input, std::string& namespace_out);
   bool changeNamespace(bool decrement);
