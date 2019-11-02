@@ -2,23 +2,27 @@ cmake_minimum_required(VERSION 2.8.3)
 project(turtlebot_sim)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
+  mv_msgs
   nav_msgs
   roscpp
   rospy
   sensor_msgs
   std_msgs
   tf
+  visualization_msgs
 )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
+find_package(Eigen3 REQUIRED)
+include_directories(${Eigen_INCLUDE_DIRS})
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -109,8 +113,8 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES turtlebot_sim
-  CATKIN_DEPENDS geometry_msgs nav_msgs roscpp rospy sensor_msgs std_msgs
-#  DEPENDS system_lib
+  CATKIN_DEPENDS geometry_msgs mv_msgs nav_msgs roscpp rospy sensor_msgs std_msgs visualization_msgs
+  DEPENDS Eigen3
 )
 
 ###########
@@ -139,6 +143,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(turtlebot_vehicle src/turtlebot_vehicle.cpp)
 add_executable(simple_map_tf src/simple_map_tf.cpp)
+add_executable(line_world_node src/line_world_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -150,12 +155,16 @@ add_executable(simple_map_tf src/simple_map_tf.cpp)
 ## same as for the library above
 add_dependencies(turtlebot_vehicle ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(simple_map_tf ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(line_world_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(turtlebot_vehicle
    ${catkin_LIBRARIES}
  )
 target_link_libraries(simple_map_tf
+   ${catkin_LIBRARIES}
+ )
+target_link_libraries(line_world_node
    ${catkin_LIBRARIES}
  )
 

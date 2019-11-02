@@ -17,8 +17,8 @@
 * limitations under the License.
 *******************************************************************************/
 
-#ifndef UNICYCLE_H_
-#define UNICYCLE_H_
+#ifndef JERK_UNICYCLE_H_
+#define JERK_UNICYCLE_H_
 
 #include <ros/ros.h>
 #include <ros/time.h>
@@ -31,11 +31,11 @@
 
 namespace dynamic_models
 {
-class Unicycle
+class JerkUnicycle
 {
 public:
-  Unicycle();
-  ~Unicycle();
+  JerkUnicycle();
+  ~JerkUnicycle();
   bool init();
   bool update();
 
@@ -52,12 +52,20 @@ private:
   // ROS time for updates
   ros::Time prev_update_time_;
 
-  // Variables
+  // State Variables
   double linear_velocity_;
   double angular_velocity_;
+  double linear_acceleration_;
+  double angular_acceleration_;
   double yaw_;
   nav_msgs::Odometry odom_;
   tf::TransformBroadcaster tf_broadcaster_;
+
+  // Control variables
+  double linear_velocity_desired_;
+  double angular_velocity_desired_;
+  double k11_, k12_, k13_, k14_,  // Feedback matrix (note: a better representation would be
+      k21_, k22_, k23_, k24_;     //   to use a linear algebra library such as Eigen3)
 
   // Function prototypes
   void commandVelocityCallback(const geometry_msgs::TwistConstPtr cmd_vel_msg);
@@ -66,4 +74,4 @@ private:
 };
 }
 
-#endif  // UNICYCLE_H_
+#endif  // JERK_UNICYCLE_H_

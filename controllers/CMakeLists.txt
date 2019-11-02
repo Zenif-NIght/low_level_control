@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   sensor_msgs
   std_msgs
+  tf
 )
 
 ## System dependencies are found with CMake's conventions
@@ -138,6 +139,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(joystick_control src/joystick_control.cpp)
 add_executable(multi_agent_joystick src/multi_agent_joystick.cpp)
+add_executable(simple_go_to_goal src/simple_go_to_goal.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -149,6 +151,7 @@ add_executable(multi_agent_joystick src/multi_agent_joystick.cpp)
 ## same as for the library above
 add_dependencies(joystick_control ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(multi_agent_joystick ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(simple_go_to_goal ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(joystick_control
@@ -156,6 +159,10 @@ target_link_libraries(joystick_control
 )
 
 target_link_libraries(multi_agent_joystick
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(simple_go_to_goal
   ${catkin_LIBRARIES}
 )
 

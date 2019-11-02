@@ -1,18 +1,46 @@
-#include "dynamic_models/unicycle.h"
+#include "dynamic_models/jerkUnicycle.h"
 
 using namespace dynamic_models;
 
-Unicycle::Unicycle()
+JerkUnicycle::JerkUnicycle()
 {
   init();
 }
 
-Unicycle::~Unicycle()
+JerkUnicycle::~JerkUnicycle()
 {
 }
 
-bool Unicycle::init()
+bool JerkUnicycle::init()
 {
+  // Initialize state variables
+  linear_velocity_ = angular_velocity_ = linear_acceleration_ = angular_acceleration_ = 0.0;
+
+  // Initialize desired velocities
+  linear_velocity_desired_ = angular_velocity_desired_ = 0.0;
+
+  // Initialize feedback matrix
+  /*****
+   * This matrix was calculated using matlab's LQR command. The system matrices used
+   * were:
+   *          [0 0 1 0]           [0 0]
+   *          [0 0 0 1]           [0 0]
+   *      A=  [0 0 0 0]        B= [1 0]
+   *          [0 0 0 0]           [0 1]
+   *
+   * The cost matrices used where:
+   *      Q = diag([10, 10, 0, 0]);
+   *      R = diag([1, 1]);
+   * *****/
+  k11_ = 3.1623;  // Feedback used to calculate linear acceleration input
+  k12_ = 0.0;
+  k13_ = 2.5149;
+  k14_ = 0.0;
+  k21_ = 0.0;  // Feedback used to calculate angular acceleration input
+  k22_ = 3.1623;
+  k23_ = 0.0;
+  k24_ = 2.5149;
+
   // Initialize the odometry position
   odom_.pose.pose.position.x = 0.0;
   odom_.pose.pose.position.y = 0.0;
@@ -21,8 +49,6 @@ bool Unicycle::init()
   odom_.pose.pose.orientation = tf::createQuaternionMsgFromYaw(yaw_);
 
   // Intialize the odometry twist
-  linear_velocity_ = 0.0;
-  angular_velocity_ = 0.0;
   odom_.twist.twist.linear.x = linear_velocity_;
   odom_.twist.twist.linear.y = 0.0;
   odom_.twist.twist.linear.z = 0.0;
@@ -42,13 +68,13 @@ bool Unicycle::init()
   odom_pub_ = nh_.advertise<nav_msgs::Odometry>("odom", 100);
 
   // initialize subscribers
-  cmd_vel_sub_ = nh_.subscribe("cmd_vel", 100, &Unicycle::commandVelocityCallback, this);
+  cmd_vel_sub_ = nh_.subscribe("cmd_vel", 100, &JerkUnicycle::commandVelocityCallback, this);
 
   prev_update_time_ = ros::Time::now();
   return true;
 }
 
-bool Unicycle::update()
+bool JerkUnicycle::update()
 {
   ros::Time time_now = ros::Time::now();
   ros::Duration step_time = time_now - prev_update_time_;
@@ -67,21 +93,35 @@ bool Unicycle::update()
   return true;
 }
 
-void Unicycle::commandVelocityCallback(const geometry_msgs::TwistConstPtr cmd_vel_msg)
+void JerkUnicycle::commandVelocityCallback(const geometry_msgs::TwistConstPtr cmd_vel_msg)
 {
-  linear_velocity_ = cmd_vel_msg->linear.x;
-  angular_velocity_ = cmd_vel_msg->angular.z;
+  linear_velocity_desired_ = cmd_vel_msg->linear.x;
+  angular_velocity_desired_ = cmd_vel_msg->angular.z;
 }
 
-bool Unicycle::updateOdometry(ros::Duration diff_time)
+bool JerkUnicycle::updateOdometry(ros::Duration diff_time)
 {
   double dt = diff_time.toSec();
+
+  // Calculate control (Note: Using the linear algebra Eigen3 library would simplify notation)
+  double u_a =
+      -(k11_ * (linear_velocity_ - linear_velocity_desired_) + k12_ * (angular_velocity_ - angular_velocity_desired_) +
+        k13_ * linear_acceleration_ + k14_ * angular_acceleration_);
+  double u_alpha =
+      -(k21_ * (linear_velocity_ - linear_velocity_desired_) + k22_ * (angular_velocity_ - angular_velocity_desired_) +
+        k23_ * linear_acceleration_ + k24_ * angular_acceleration_);
 
   // Use Euler integration for updating the odometry
   odom_.pose.pose.position.x = odom_.pose.pose.position.x + dt * linear_velocity_ * std::cos(yaw_);
   odom_.pose.pose.position.y = odom_.pose.pose.position.y + dt * linear_velocity_ * std::sin(yaw_);
   yaw_ = yaw_ + dt * angular_velocity_;
   odom_.pose.pose.orientation = tf::createQuaternionMsgFromYaw(yaw_);
+
+  // Use Euler integration to update velocity and acceleration states
+  linear_velocity_ = linear_velocity_ + dt * linear_acceleration_;
+  angular_velocity_ = angular_velocity_ + dt * angular_acceleration_;
+  linear_acceleration_ = linear_acceleration_ + dt * u_a;
+  angular_acceleration_ = angular_acceleration_ + dt * u_alpha;
 
   // Update the odometry twist
   odom_.twist.twist.linear.x = linear_velocity_;
@@ -90,7 +130,7 @@ bool Unicycle::updateOdometry(ros::Duration diff_time)
   return true;
 }
 
-void Unicycle::updateTF(geometry_msgs::TransformStamped& odom_tf)
+void JerkUnicycle::updateTF(geometry_msgs::TransformStamped& odom_tf)
 {
   odom_tf.header = odom_.header;
   odom_tf.child_frame_id = odom_.child_frame_id;
@@ -105,14 +145,14 @@ void Unicycle::updateTF(geometry_msgs::TransformStamped& odom_tf)
 *******************************************************************************/
 int main(int argc, char* argv[])
 {
-  ros::init(argc, argv, "unicycle_dynamics_node");
-  Unicycle unicycle;
+  ros::init(argc, argv, "jerk_unicycle_dynamics_node");
+  JerkUnicycle jerk_unicycle;
 
   ros::Rate loop_rate(30);
 
   while (ros::ok())
   {
-    unicycle.update();
+    jerk_unicycle.update();
     ros::spinOnce();
     loop_rate.sleep();
   }
