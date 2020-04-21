@@ -84,7 +84,7 @@ void LineWorld::createWorldVisualizationMessage()
   // ********* Visualize the lines ******** //
   // Create a visualization marker
   visualization_msgs::Marker marker;
-  marker.header.stamp = ros::Time::now();
+  marker.header.stamp = ros::Time(0);
   marker.header.frame_id = frame_id;
   marker.ns = "line_world";
   marker.type = marker.CYLINDER;
@@ -124,6 +124,7 @@ void LineWorld::createWorldVisualizationMessage()
 
     // Add Points to the marker
     marker.points.clear();
+    marker.colors.clear();
     marker.points.push_back(pnt1);
     marker.points.push_back(pnt2);
     marker.colors.push_back(marker.color);
@@ -228,7 +229,7 @@ bool LineWorld::publishIntersectionPoints()
   // ********* Visualize the lines ******** //
   // Create a visualization marker
   visualization_msgs::Marker marker;
-  marker.header.stamp = ros::Time::now();
+  marker.header.stamp = ros::Time(0);
   marker.header.frame_id = frame_id;
   marker.ns = "line_intersections";
   marker.type = marker.CYLINDER;
@@ -270,6 +271,7 @@ bool LineWorld::publishIntersectionPoints()
 
     // Add Points to the marker
     marker.points.clear();
+    marker.colors.clear();
     marker.points.push_back(pnt1);
     marker.points.push_back(pnt2);
     marker.colors.push_back(marker.color);
