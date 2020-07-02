@@ -1,0 +1,38 @@
+<!-- occupancy_grid.launch -->
+<launch>
+  <arg name="loop_rate"               default="30" />
+  <arg name="world_file"              default="$(find occupancy_grid)/config/spiral_world.yaml" />
+
+  <arg name="resolution"              default="0.01" />
+  <arg name="service_topic"           default="get_occupancy_grid" />
+  <arg name="message_topic"           default="occupancy_grid" />
+  <arg name="tf_frame"                default="map" />
+
+  <arg name="laser_scan_topic"        default="laser_scan" />
+  <arg name="laser_scan_queue_length" default="5" />
+
+  <arg name="gazebo_running"          default="false" />
+  <arg name="start_rviz"              default="true" />
+
+  <rosparam command="load" file="$(arg world_file)" ns="occupancy_grid" />
+
+  <rosparam subst_value="true" if="$(arg gazebo_running)" ns="occupancy_grid" >
+    laser_scan_topic: $(arg laser_scan_topic)
+    laser_scan_queue_length: $(arg laser_scan_queue_length)
+  </rosparam>
+
+  <node name="occupancy_grid" pkg="occupancy_grid" type="occupancy_grid_node" output="screen" launch-prefix="" >
+    <rosparam subst_value="true">
+      loop_rate: $(arg loop_rate)
+      resolution: $(arg resolution)
+      service_topic: $(arg service_topic)
+      message_topic: $(arg message_topic)
+      tf_frame: $(arg tf_frame)
+    </rosparam>
+  </node>
+
+  <group if="$(arg start_rviz)">
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find rrt_logger)/rviz/simple.rviz"/>
+  </group>
+</launch>
+<!-- occupancy_grid.launch -->
