@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(occupancy_grid)
 
-add_compile_options(-std=c++17)
+add_compile_options(-std=c++11)
 add_compile_options(-g -Og)
 #add_compile_options(-O3)
 
