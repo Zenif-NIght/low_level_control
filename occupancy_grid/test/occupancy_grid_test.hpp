@@ -3,7 +3,7 @@
  * @author Ryan Jacobson (jacobsonryan28@gmail.com  )
  * @brief Contains the test fixture for the occupancy grid unit tests
  * @date 2020-05-27
- * 
+ *
  * @copyright Copyright (c) 2020
  */
 #ifndef OCCUPANCY_GRID_TEST

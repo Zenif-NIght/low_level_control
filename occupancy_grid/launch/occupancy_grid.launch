@@ -11,12 +11,12 @@
   <arg name="laser_scan_topic"        default="laser_scan" />
   <arg name="laser_scan_queue_length" default="5" />
 
-  <arg name="gazebo_running"          default="false" />
+  <arg name="laser_scan"              default="true" />
   <arg name="start_rviz"              default="true" />
 
   <rosparam command="load" file="$(arg world_file)" ns="occupancy_grid" />
 
-  <rosparam subst_value="true" if="$(arg gazebo_running)" ns="occupancy_grid" >
+  <rosparam subst_value="true" if="$(arg laser_scan)" ns="occupancy_grid" >
     laser_scan_topic: $(arg laser_scan_topic)
     laser_scan_queue_length: $(arg laser_scan_queue_length)
   </rosparam>

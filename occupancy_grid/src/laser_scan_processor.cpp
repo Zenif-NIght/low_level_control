@@ -44,8 +44,8 @@ void LaserScanProcessor::laserScanCallback(const sensor_msgs::LaserScan& msg)
   for(size_t range_it = 0; range_it < msg.ranges.size(); range_it++)
   {
     // If there is a visible obstacle
-    if((msg.ranges[range_it] >= msg.range_min) and
-       (msg.ranges[range_it] <= msg.range_max))
+    if((msg.ranges[range_it] > msg.range_min) and
+       (msg.ranges[range_it] < msg.range_max))
     {
       if(last_was_obs)
       {
@@ -89,8 +89,8 @@ void LaserScanProcessor::laserScanCallback(const sensor_msgs::LaserScan& msg)
         point_yaw = msg.angle_min - msg.angle_increment;
 
         // Find x and y
-        temp_point.point.x = msg.ranges[range_it] * std::cos(point_yaw);
-        temp_point.point.y = msg.ranges[range_it] * std::sin(point_yaw);
+        temp_point.point.x = msg.ranges[range_it-1] * std::cos(point_yaw);
+        temp_point.point.y = msg.ranges[range_it-1] * std::sin(point_yaw);
         temp_point.point.z = 0;
 
         // Transform to map frame

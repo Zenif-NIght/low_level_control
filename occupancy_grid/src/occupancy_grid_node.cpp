@@ -76,8 +76,8 @@ int main(int argc, char** argv)
     ROS_ERROR("Couldn't find topic information");
   }
 
-  if(!p_nh.getParam("laser_scan_topic",        laser_scan_topic) or
-     !p_nh.getParam("laser_scan_queue_length", laser_scan_queue_length))
+  if(p_nh.getParam("laser_scan_topic",        laser_scan_topic) and
+     p_nh.getParam("laser_scan_queue_length", laser_scan_queue_length))
   {
     laser_scan.reset(new LaserScanProcessor(laser_scan_topic, header.frame_id, laser_scan_queue_length));
   }
