@@ -32,7 +32,7 @@
   </node>
 
   <group if="$(arg start_rviz)">
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find rrt_logger)/rviz/simple.rviz"/>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find occupancy_grid)/rviz/simple.rviz"/>
   </group>
 </launch>
 <!-- occupancy_grid.launch -->
