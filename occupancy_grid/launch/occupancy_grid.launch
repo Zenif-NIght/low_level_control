@@ -1,18 +1,18 @@
 <!-- occupancy_grid.launch -->
 <launch>
   <arg name="loop_rate"               default="30" />
-  <arg name="world_file"              default="$(find occupancy_grid)/config/spiral_world.yaml" />
+  <arg name="world_file"              default="$(find occupancy_grid)/config/empty_world.yaml" />
 
   <arg name="resolution"              default="0.01" />
   <arg name="service_topic"           default="get_occupancy_grid" />
   <arg name="message_topic"           default="occupancy_grid" />
   <arg name="tf_frame"                default="map" />
 
-  <arg name="laser_scan_topic"        default="laser_scan" />
+  <arg name="laser_scan_topic"        default="robot1/scan" />
   <arg name="laser_scan_queue_length" default="5" />
 
   <arg name="laser_scan"              default="true" />
-  <arg name="start_rviz"              default="true" />
+  <arg name="start_rviz"              default="false" />
 
   <rosparam command="load" file="$(arg world_file)" ns="occupancy_grid" />
 

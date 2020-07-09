@@ -167,8 +167,8 @@ void OccupancyGrid::setPoint(const std::array<double,2>& point, const bool val)
 void OccupancyGrid::setLine(const std::array<std::array<double,2>,2>& line, const bool val)
 {
   cv::line(this->grid,
-           cv::Point2d(line[0][0] / this->resolution(), line[0][1] / this->resolution()),
-           cv::Point2d(line[1][0] / this->resolution(), line[1][1] / this->resolution()),
+           cv::Point2d((line[0][0] - this->cgetOrigin().position.x) / this->resolution(), (line[0][1] - this->cgetOrigin().position.y) / this->resolution()),
+           cv::Point2d((line[1][0] - this->cgetOrigin().position.x) / this->resolution(), (line[1][1] - this->cgetOrigin().position.y) / this->resolution()),
            100 * val,
            this->lineWidth()/this->resolution(),
            cv::LINE_8);
