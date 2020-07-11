@@ -82,8 +82,10 @@ int main(int argc, char** argv)
     laser_scan.reset(new LaserScanProcessor(laser_scan_topic, header.frame_id, laser_scan_queue_length));
   }
 
+  // Create an initial occupancy grid
   grid = OccupancyGrid::makeOccupancyGrid(p_nh);
 
+  // Advertize the occupance grid
   grid_pub = m_nh.advertise<nav_msgs::OccupancyGrid>(message_topic, 2);
   grid_srv = m_nh.advertiseService(service_topic,
                                    boost::function<bool(occupancy_grid::GetOccupancyGridRequest&,occupancy_grid::GetOccupancyGridResponse&)>(
