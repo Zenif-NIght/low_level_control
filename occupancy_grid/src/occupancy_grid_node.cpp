@@ -54,30 +54,33 @@ int main(int argc, char** argv)
   std::mutex                          grid_mux;
   std::unique_ptr<LaserScanProcessor> laser_scan;
 
-  ros::Publisher     grid_pub;
+  /** TODO: instantiate the publisher here */
   ros::ServiceServer grid_srv;
 
   std::string      service_topic;
-  std::string      message_topic;
+  std::string      message_topic = "occupancy_grid";
   std_msgs::Header header;
 
-  std::string laser_scan_topic;
+  std::string laser_scan_topic = "laser_scan";
   int         laser_scan_queue_length(0);
 
   /* Initialize variables */
   header.seq   = 0;
   header.stamp = ros::Time::now();
 
-  // Get topic parameters
+  // Get service and tf parameters
   if(!p_nh.getParam("service_topic",    service_topic)    or
-     !p_nh.getParam("message_topic",    message_topic)    or
      !p_nh.getParam("tf_frame",         header.frame_id))
   {
     ROS_ERROR("Couldn't find topic information");
   }
 
-  if(p_nh.getParam("laser_scan_topic",        laser_scan_topic) and
-     p_nh.getParam("laser_scan_queue_length", laser_scan_queue_length))
+  // Get topic parameters: Note - if these parameters are not set, then the default topics set above will be used
+  p_nh.getParam("message_topic",    message_topic);
+  p_nh.getParam("laser_scan_topic", laser_scan_topic);
+
+  // Setup the laser scan only if the queue length is provided
+  if(p_nh.getParam("laser_scan_queue_length", laser_scan_queue_length))
   {
     laser_scan.reset(new LaserScanProcessor(laser_scan_topic, header.frame_id, laser_scan_queue_length));
   }
@@ -86,7 +89,7 @@ int main(int argc, char** argv)
   grid = OccupancyGrid::makeOccupancyGrid(p_nh);
 
   // Advertize the occupance grid
-  grid_pub = m_nh.advertise<nav_msgs::OccupancyGrid>(message_topic, 2);
+  /** TODO: advertize the topic here */
   grid_srv = m_nh.advertiseService(service_topic,
                                    boost::function<bool(occupancy_grid::GetOccupancyGridRequest&,occupancy_grid::GetOccupancyGridResponse&)>(
                                      std::bind(giveGrid,
@@ -126,7 +129,7 @@ int main(int argc, char** argv)
       grid_msg.info   = grid->cgetInfo();
       grid_msg.data   = grid->cgetOccupancyGrid().reshape(0, 1);
 
-      grid_pub.publish(grid_msg);
+      /** TODO: Publish grid_msg here */
     }
 
     grid_mux.unlock();
