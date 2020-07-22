@@ -4,7 +4,7 @@
 
 using namespace controllers;
 
-SimpleGoToGoal::SimpleGoToGoal() : goal_received(false), v_nom(1.0), k_w(1.0), k_v(0.5)
+SimpleGoToGoal::SimpleGoToGoal(bool flag_pub_path) : goal_received(false), publish_path(flag_pub_path), v_nom(1.0), k_w(1.0), k_v(0.5)
 {
   // Read in constants
   ros::NodeHandle nh("~");
@@ -62,7 +62,7 @@ void SimpleGoToGoal::publishCommand()
   pub_command.publish(cmd);
 
   // ********************* Publish path to goal  *************************** //
-  if (odom && goal_received)
+  if (publish_path && odom && goal_received)
   {
     // Initial the path variable
     nav_msgs::Path path;
@@ -138,7 +138,7 @@ int main(int argc, char** argv)
   ros::start();
 
   ros::Rate r(20);
-  SimpleGoToGoal ctrl;
+  SimpleGoToGoal ctrl(false);
 
   while (ros::ok())
   {

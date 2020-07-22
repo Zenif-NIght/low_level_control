@@ -63,6 +63,13 @@ private:
   void commandVelocityCallback(const geometry_msgs::TwistConstPtr cmd_vel_msg);
   bool updateOdometry(ros::Duration diff_time);
   void updateTF(geometry_msgs::TransformStamped& odom_tf);
+
+  // Helper functions
+  /*!
+   * \brief cleanFrameId Removes any preceeding slashes from the frame ID as those are not allowed with tf2
+   * \param frame_id identification of the frame to be cleaned
+   */
+  void cleanFrameId(std::string & frame_id);
 };
 }
 

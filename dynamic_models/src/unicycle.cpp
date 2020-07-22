@@ -33,6 +33,12 @@ bool Unicycle::init()
   nh_.param("odom_frame", odom_.header.frame_id, std::string("odom"));
   nh_.param("base_frame", odom_.child_frame_id, std::string("base_footprint"));
 
+  // Clean the forward slashes from the frame id's
+  cleanFrameId(odom_.header.frame_id);
+  cleanFrameId(odom_.child_frame_id);
+
+  ROS_INFO_STREAM("odom_frame = " << odom_.header.frame_id);
+
   double pcov[36] = { 0.1, 0, 0, 0,   0, 0, 0, 0.1, 0, 0, 0,   0, 0, 0, 1e6, 0, 0, 0,
                       0,   0, 0, 1e6, 0, 0, 0, 0,   0, 0, 1e6, 0, 0, 0, 0,   0, 0, 0.2 };
   memcpy(&(odom_.pose.covariance), pcov, sizeof(double) * 36);
@@ -46,6 +52,22 @@ bool Unicycle::init()
 
   prev_update_time_ = ros::Time::now();
   return true;
+}
+
+void Unicycle::cleanFrameId(std::string &frame_id) {
+    // Read the size of the frame id
+    std::size_t len = frame_id.size();
+
+    // Check to see if the starting character is a forward slash
+    if(len > 0 && frame_id[0] == '/') {
+        frame_id = frame_id.substr(1, len-1);
+    }
+
+
+    if(len > 0 && frame_id[0] == '/') {
+        frame_id = frame_id.substr(1, len-1);
+        ROS_WARN_STREAM("Unicycle::cleanFrameId() bad frame_id: " << frame_id);
+    }
 }
 
 bool Unicycle::update()

@@ -15,7 +15,7 @@ namespace controllers
 class SimpleGoToGoal
 {
 public:
-  SimpleGoToGoal();
+  SimpleGoToGoal(bool publish_path);
 
 public:
   void goalCallback(const geometry_msgs::PoseStamped::ConstPtr& msg);
@@ -40,6 +40,7 @@ private:
 
   // Flags
   bool goal_received;  // True if a goal location has been received, false otherwise
+  const bool publish_path; // True => publish the path to the goal, false => do not
 
   // Nominal command values
   double v_nom;  // Nominal translational velocity
